@@ -2,7 +2,7 @@
 import './App.css';
 import app from './firebase.init';
 
-import {getAuth, GoogleAuthProvider, signInWithPopup, signOut} from 'firebase/auth'
+import {getAuth, GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut} from 'firebase/auth'
 import { useState } from 'react';
 const auth =getAuth()
 
@@ -10,11 +10,12 @@ const auth =getAuth()
 function App() {
 
   const [user, setUser] = useState({})
-  const provider = new GoogleAuthProvider();
+  const googleProvider = new GoogleAuthProvider();
+  const gitProvider = new GithubAuthProvider();
 
   const handleGoogleSingIn =()=>{
     // console.log('woring');
-    signInWithPopup(auth,provider)
+    signInWithPopup(auth,googleProvider)
     .then(result =>{
       const user = result.user
       setUser(user)
@@ -24,6 +25,19 @@ function App() {
       console.log(error);
     })
   }
+
+ const handleGithubSingIn =()=>{
+       signInWithPopup(auth,gitProvider)
+       .then(result =>{
+         const user = result.user
+         setUser(user)
+         console.log(user);
+       }).catch(error=> {
+  console.error(error);
+       })
+
+ }
+
   const handleSingOut = () =>{
     signOut(auth)
     .then(() => {
@@ -40,10 +54,12 @@ function App() {
 
       {/* {condigiton ? true : flase} */}
   {  
-      user.email? 
+      user.uid? 
       <button onClick={handleSingOut}>Sing Out</button> :
-     <button onClick={handleGoogleSingIn}> Google Sing In</button>
-    
+  <>
+       <button onClick={handleGoogleSingIn}> Google Sing In</button>
+      <button onClick={handleGithubSingIn}>Github Sing IN</button>
+  </>
       }
       <h1>Name : {user.displayName}</h1>
       <p>I know your email address : {user.email}</p>
